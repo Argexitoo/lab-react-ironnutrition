@@ -1,24 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import 'bulma/css/bulma.css';
+import foods from './foods.json';
+import FoodBox from './components/FoodBox';
+import AddFood from './components/AddFood';
+import Search from './components/Search';
 
 function App() {
+  const [food, setFood] = useState(foods);
+
+
+  const handleOnAdd = (newFood) => {
+    setFood([
+      ...food,
+      {
+        name: newFood.name,
+        image: newFood.image,
+        calories: newFood.calories,
+      },
+    ]);
+  };
+
+  const handleOnFilter = (input) => {
+    const filteredFood = food.filter((food) =>
+      food.name.toLowerCase().includes(input.toLowerCase())
+    );
+    setFood(filteredFood);
+    if (input === '') {
+      setFood(foods);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AddFood onAdd={handleOnAdd} />
+      <Search onFilter={handleOnFilter} />
+      {food.map((products) => {
+        return (
+          <FoodBox
+            key={products.id}
+            name={products.name}
+            calories={products.calories}
+            quantity={products.quantity}
+            image={products.image}
+          />
+        );
+      })}
+      )
     </div>
   );
 }
